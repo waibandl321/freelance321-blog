@@ -8,8 +8,8 @@ export default defineNuxtConfig({
     },
     moduleOptions: {
       /* nuxt-vuetify module options */
-      // treeshaking: true | false,
-      // useIconCDN: true | false,
+      treeshaking: true,
+      useIconCDN: true,
       /* vite-plugin-vuetify options */
       // styles: true | 'none' | 'expose' | 'sass' | { configFile: string },
       // autoImport: true | false,

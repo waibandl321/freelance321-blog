@@ -30,4 +30,8 @@
 
 <script setup>
 const cards = ["Today", "Yesterday"];
+useHead({
+  title: "HOME",
+  meta: [{ name: "description", content: "HPMEページのdescriptionです。" }],
+});
 </script>
