@@ -1,5 +1,5 @@
 <template>
-  <div>
-    <v-alert>aaa</v-alert>
-  </div>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>

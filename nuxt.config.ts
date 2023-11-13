@@ -16,4 +16,9 @@ export default defineNuxtConfig({
       // useVuetifyLabs: true | false,
     },
   },
+  app: {
+    head: {
+      link: [{ rel: "icon", href: "/favicon.jpeg" }],
+    },
+  },
 });
