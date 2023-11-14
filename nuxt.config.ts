@@ -5,7 +5,7 @@ export default defineNuxtConfig({
     preset: "aws-lambda",
     serveStatic: false,
   },
-  modules: ["@invictus.codes/nuxt-vuetify"],
+  modules: ["@invictus.codes/nuxt-vuetify", "@nuxt/image"],
   vuetify: {
     vuetifyOptions: {
       // @TODO: list all vuetify options
@@ -29,4 +29,5 @@ export default defineNuxtConfig({
       link: [{ rel: "icon", href: "/favicon.jpeg" }],
     },
   },
+  css: ["/assets/css/post.css", "/assets/css/highlight.css"],
 });
