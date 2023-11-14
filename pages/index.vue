@@ -28,7 +28,7 @@
   </v-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const cards = ["Today", "Yesterday"];
 useHead({
   title: "HOME",
