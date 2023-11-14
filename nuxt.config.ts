@@ -1,11 +1,19 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  runtimeConfig: {
+    public: {
+      WP_API_BASE_URL: process.env.WP_API_BASE_URL,
+    },
+  },
   nitro: {
     preset: "aws-lambda",
     serveStatic: false,
   },
-  modules: ["@invictus.codes/nuxt-vuetify", "@nuxt/image"],
+  modules: ["@invictus.codes/nuxt-vuetify", "@nuxt/image", "@pinia/nuxt"],
+  pinia: {
+    storesDirs: ["./stores/**"],
+  },
   vuetify: {
     vuetifyOptions: {
       // @TODO: list all vuetify options

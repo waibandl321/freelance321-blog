@@ -9,25 +9,16 @@
 import { useRoute } from "vue-router";
 import sanitizeHtml from "sanitize-html";
 import hljs from "highlight.js";
-
-type Post = {
-  id: number;
-  title: {
-    rendered: string;
-  };
-  content: {
-    rendered: string;
-  };
-  excerpt: {
-    rendered: string;
-  };
-};
+import type { PostType } from "@/types/post";
 
 const route = useRoute();
 const slug = route.params.slug;
 
-const { data: postData } = await useFetch<Post[]>(
-  `https://freelance321.com/wp-json/wp/v2/posts?_embed&slug=${slug}`
+// 設定: envファイル読み込みに使用
+const config = useRuntimeConfig();
+
+const { data: postData } = await useFetch<PostType[]>(
+  `${config.public.WP_API_BASE_URL}/posts?_embed&slug=${slug}`
 );
 
 useSeoMeta({

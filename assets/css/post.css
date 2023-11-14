@@ -1,6 +1,9 @@
 h2#outline__1 {
   margin-top: 16px;
 }
+.v-responsive.v-img {
+  height: 100%;
+}
 .post-wrap h2 {
   font-size: 24px;
 }
