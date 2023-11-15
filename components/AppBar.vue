@@ -25,6 +25,6 @@ const links = [
   { text: "TOP", to: "/" },
   { text: "全記事一覧", to: "/sitemap" },
   { text: "プライバシーポリシー", to: "/privacy" },
-  { text: "当サイトについて", to: "/about" },
+  { text: "当サイトについて", to: "/profile" },
 ];
 </script>

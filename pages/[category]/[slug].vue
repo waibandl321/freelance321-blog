@@ -22,11 +22,9 @@ const { data: postData } = await useFetch<PostType[]>(
 );
 
 useSeoMeta({
-  title: () => postData.value?.[0]?.title.rendered ?? "Default Title",
+  title: () => postData.value?.[0]?.title.rendered ?? "",
   description: () =>
-    `description: ${
-      postData.value?.[0]?.excerpt.rendered ?? "Default Description"
-    }`,
+    `description: ${postData.value?.[0]?.excerpt.rendered ?? ""}`,
 });
 
 const formattedContent = ref(""); // 整形されたコンテンツを保存するためのリアクティブな変数
