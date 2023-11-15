@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PostType } from "~/types/post";
+import type { PostType } from "@/types/post";
 import { useCategoryStore } from "@/stores/categoryStore";
 import { storeToRefs } from "pinia";
 import PostCard from "@/components/posts/PostCard.vue";

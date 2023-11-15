@@ -3,14 +3,7 @@
     <AppBar />
     <NavigationDrawer />
     <v-main>
-      <Suspense>
-        <template #fallback>
-          <NuxtLoadingIndicator />
-        </template>
-        <template #default>
-          <slot />
-        </template>
-      </Suspense>
+      <slot />
     </v-main>
   </v-app>
 </template>

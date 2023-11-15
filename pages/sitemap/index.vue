@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
 import type { PostType } from "@/types/post";
-import type { PageType } from "~/types/page";
+import type { PageType } from "@/types/page";
 import InfiniteLoading from "v3-infinite-loading";
 import { storeToRefs } from "pinia";
 

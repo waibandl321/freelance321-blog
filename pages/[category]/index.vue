@@ -29,9 +29,9 @@ import { useRoute } from "vue-router";
 import type { PostType } from "@/types/post";
 import { useCategoryStore } from "@/stores/categoryStore";
 import { storeToRefs } from "pinia";
+import PostCard from "@/components/posts/PostCard.vue";
 import InfiniteLoading from "v3-infinite-loading";
 import "v3-infinite-loading/lib/style.css";
-import PostCard from "~/components/posts/PostCard.vue";
 
 // vue-router
 const route = useRoute();
@@ -53,14 +53,24 @@ const targetCategory = computed(() =>
 );
 
 /**
- * カテゴリの記事一覧取得処理
+ * カテゴリーに紐づく投稿一覧の取得処理
  */
-const { data, pending } = await useAsyncData(
+const fetchCategoryPosts = () =>
+  $fetch<PostType[]>(`${config.public.WP_API_BASE_URL}/posts`, {
+    params: {
+      _embed: true,
+      categories: targetCategory.value?.id,
+      per_page: perPageCount,
+      page: currentPage.value,
+    },
+  });
+
+/**
+ * データ取得
+ */
+const { data, pending } = await useAsyncData<PostType[]>(
   `fetch-category-post-${route.params.category}-key`,
-  () =>
-    $fetch<PostType[]>(
-      `${config.public.WP_API_BASE_URL}/posts?_embed&categories=${targetCategory.value?.id}&per_page=${perPageCount}&page=${currentPage.value}`
-    ),
+  () => fetchCategoryPosts(),
   {
     lazy: true,
   }
@@ -84,9 +94,7 @@ const infiniteLoadPost = async ($state: any) => {
   try {
     // ページカウントを加算
     currentPage.value++;
-    const { data: posts } = await useFetch<PostType[]>(
-      `${config.public.WP_API_BASE_URL}/posts?_embed&categories=${targetCategory.value?.id}&per_page=${perPageCount}&page=${currentPage.value}`
-    );
+    const { data: posts } = await useAsyncData(() => fetchCategoryPosts());
     if (posts.value) {
       posts.value.forEach((post) => {
         categoryPosts.value.push(post);
