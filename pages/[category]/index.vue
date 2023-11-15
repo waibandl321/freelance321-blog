@@ -20,6 +20,7 @@
         </v-col>
       </v-row>
     </v-card>
+    <InfiniteLoading @infinite="infiniteLoadPost" />
   </div>
   <div v-else class="pa-6">データはありません</div>
 </template>
@@ -30,6 +31,8 @@ import sanitizeHtml from "sanitize-html";
 import type { PostType } from "@/types/post";
 import { useCategoryStore } from "@/stores/categoryStore";
 import { storeToRefs } from "pinia";
+import InfiniteLoading from "v3-infinite-loading";
+import "v3-infinite-loading/lib/style.css";
 
 // vue-router
 const route = useRoute();
@@ -39,7 +42,8 @@ const config = useRuntimeConfig();
 // store
 const categoryStore = useCategoryStore();
 const { getgetCategoriesMap, categories } = storeToRefs(categoryStore);
-
+// ページング
+const perPageCount = 10;
 const currentPage = ref(1);
 
 /**
@@ -53,13 +57,42 @@ const targetCategory = computed(() =>
  * カテゴリの記事一覧取得処理
  */
 const { data } = await useFetch<PostType[]>(
-  `${config.public.WP_API_BASE_URL}/posts?_embed&categories=${targetCategory.value?.id}&per_page=10&page=${currentPage.value}`
+  `${config.public.WP_API_BASE_URL}/posts?_embed&categories=${targetCategory.value?.id}&per_page=${perPageCount}&page=${currentPage.value}`
 );
 
 /**
  * カテゴリーの投稿一覧
  */
 const categoryPosts = computed(() => data.value ?? []);
+
+/**
+ * infinite-loadingで記事を追加読み込みする
+ * @param $state loadingの状態を管理するstate
+ */
+const infiniteLoadPost = async ($state: any) => {
+  if (categoryPosts.value.length < perPageCount) {
+    // 記事数が10未満の場合は取得処理を行わない
+    $state.complete();
+    return;
+  }
+  try {
+    // ページカウントを加算
+    currentPage.value++;
+    const { data: posts } = await useFetch<PostType[]>(
+      `${config.public.WP_API_BASE_URL}/posts?_embed&categories=${targetCategory.value?.id}&per_page=${perPageCount}&page=${currentPage.value}`
+    );
+    if (posts.value) {
+      posts.value.forEach((post) => {
+        categoryPosts.value.push(post);
+      });
+    } else {
+      $state.complete();
+    }
+  } catch (error) {
+    console.log(error);
+    $state.complete();
+  }
+};
 
 /**
  * サムネイルURLを返す
