@@ -13,28 +13,12 @@
   </v-overlay>
   <template v-else>
     <div v-if="categoryPosts.length > 0" class="pa-6">
-      <v-card
+      <PostCard
         v-for="post in categoryPosts"
         :key="post.id"
-        elevation="4"
-        class="mb-6"
-        @click="handleClickPost(post)"
-      >
-        <v-row>
-          <v-col cols="2"
-            ><v-img :src="postFeatureImgPath(post)" cover
-          /></v-col>
-          <v-col>
-            <v-card-title
-              v-html="sanitizeHtml(post.title.rendered)"
-            ></v-card-title>
-            <v-card-subtitle>{{ post.date }}</v-card-subtitle>
-            <v-card-text
-              v-html="sanitizeHtml(post.excerpt.rendered)"
-            ></v-card-text>
-          </v-col>
-        </v-row>
-      </v-card>
+        :post="post"
+        @handleClickPost="handleClickPost"
+      />
       <InfiniteLoading @infinite="infiniteLoadPost" />
     </div>
   </template>
@@ -42,12 +26,12 @@
 
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
-import sanitizeHtml from "sanitize-html";
 import type { PostType } from "@/types/post";
 import { useCategoryStore } from "@/stores/categoryStore";
 import { storeToRefs } from "pinia";
 import InfiniteLoading from "v3-infinite-loading";
 import "v3-infinite-loading/lib/style.css";
+import PostCard from "~/components/posts/PostCard.vue";
 
 // vue-router
 const route = useRoute();
@@ -114,16 +98,6 @@ const infiniteLoadPost = async ($state: any) => {
     console.log(error);
     $state.complete();
   }
-};
-
-/**
- * サムネイルURLを返す
- */
-const postFeatureImgPath = (post: PostType) => {
-  return (
-    post._embedded?.["wp:featuredmedia"]?.[0]?.source_url ??
-    "/images/comming-soon.png"
-  );
 };
 
 /**

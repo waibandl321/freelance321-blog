@@ -12,7 +12,7 @@
     ></v-progress-circular>
   </v-overlay>
   <template v-else>
-    <div class="post-content">
+    <div class="post-content" v-if="postData && formattedContent">
       <h1>{{ sanitizeHtml(postData?.[0]?.title.rendered ?? "") }}</h1>
       <div v-html="formattedContent"></div>
     </div>
@@ -30,6 +30,8 @@ const slug = route.params.slug;
 
 // 設定: envファイル読み込みに使用
 const config = useRuntimeConfig();
+// 初回描画フラグ
+const isMounted = ref(false);
 
 const { data: postData, pending } = await useAsyncData(
   `fetch-post-${slug}-key`,
@@ -58,6 +60,7 @@ const formattedContent = computed(() => convertHighlightElement());
  * この対応を行うことでコードブロックにCSSが適用されるようになる
  */
 const convertHighlightElement = () => {
+  if (!isMounted.value) return;
   const dom = document.createElement("div");
   dom.innerHTML = postData.value?.[0].content.rendered ?? "";
   const hcb_elements = dom.querySelectorAll(".hcb_wrap pre");
@@ -90,6 +93,7 @@ const convertHighlightElement = () => {
 };
 
 onMounted(() => {
+  isMounted.value = true;
   convertHighlightElement();
 });
 

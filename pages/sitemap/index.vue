@@ -52,11 +52,17 @@ const currentPage = ref(1);
 const categoryStore = useCategoryStore();
 const { getgetCategoriesMap } = storeToRefs(categoryStore);
 
+/**
+ * 投稿一覧を取得
+ */
 const fetchPosts = () =>
   $fetch<PostType[]>(`${config.public.WP_API_BASE_URL}/posts`, {
     params: { per_page: perPageCount, page: currentPage.value },
   });
 
+/**
+ * データ取得: 並列処理
+ */
 const fetchData = async () => {
   const pagePromise = $fetch<PageType[]>(
     `${config.public.WP_API_BASE_URL}/pages?slug=${encodeURIComponent(
@@ -67,6 +73,7 @@ const fetchData = async () => {
   const [pageData, posts] = await Promise.all([pagePromise, postsPromise]);
   return { pageData, posts };
 };
+
 const { data, pending } = await useAsyncData(
   "fetch-sitemap-page-data",
   fetchData,
