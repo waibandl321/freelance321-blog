@@ -1,8 +1,22 @@
 <template>
-  <div class="post-content">
-    <h1>{{ postData?.[0]?.title.rendered ?? "" }}</h1>
-    <div v-html="formattedContent"></div>
-  </div>
+  <v-overlay
+    v-if="pending"
+    :model-value="pending"
+    class="align-center justify-center"
+    scroll-strategy="reposition"
+  >
+    <v-progress-circular
+      color="white"
+      indeterminate
+      size="64"
+    ></v-progress-circular>
+  </v-overlay>
+  <template v-else>
+    <div class="post-content">
+      <h1>{{ sanitizeHtml(postData?.[0]?.title.rendered ?? "") }}</h1>
+      <div v-html="formattedContent"></div>
+    </div>
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -17,8 +31,15 @@ const slug = route.params.slug;
 // 設定: envファイル読み込みに使用
 const config = useRuntimeConfig();
 
-const { data: postData } = await useFetch<PostType[]>(
-  `${config.public.WP_API_BASE_URL}/posts?_embed&slug=${slug}`
+const { data: postData, pending } = await useAsyncData(
+  `fetch-post-${slug}-key`,
+  () =>
+    $fetch<PostType[]>(
+      `${config.public.WP_API_BASE_URL}/posts?_embed&slug=${slug}`
+    ),
+  {
+    lazy: true,
+  }
 );
 
 useSeoMeta({
@@ -27,9 +48,16 @@ useSeoMeta({
     `description: ${postData.value?.[0]?.excerpt.rendered ?? ""}`,
 });
 
-const formattedContent = ref(""); // 整形されたコンテンツを保存するためのリアクティブな変数
+/**
+ * 整形されたコンテンツを保存するためのリアクティブな変数
+ */
+const formattedContent = computed(() => convertHighlightElement());
 
-onMounted(() => {
+/**
+ * WordPressのhighlight code blockで生成された要素をHTML要素に変換する
+ * この対応を行うことでコードブロックにCSSが適用されるようになる
+ */
+const convertHighlightElement = () => {
   const dom = document.createElement("div");
   dom.innerHTML = postData.value?.[0].content.rendered ?? "";
   const hcb_elements = dom.querySelectorAll(".hcb_wrap pre");
@@ -58,7 +86,11 @@ onMounted(() => {
     code.appendChild(lineNumbersWrapper);
   }
 
-  formattedContent.value = sanitizeHtml(dom.outerHTML);
+  return sanitizeHtml(dom.outerHTML);
+};
+
+onMounted(() => {
+  convertHighlightElement();
 });
 
 // -- sanitizeHTMLホワイトリスト -------------- //

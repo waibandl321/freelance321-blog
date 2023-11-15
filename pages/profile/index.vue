@@ -1,8 +1,22 @@
 <template>
-  <div class="pa-6 post-content" v-if="pageData">
-    <h1>{{ pageData?.[0]?.title.rendered ?? "" }}</h1>
-    <div v-html="formattedContent"></div>
-  </div>
+  <v-overlay
+    v-if="pending"
+    :model-value="pending"
+    class="align-center justify-center"
+    scroll-strategy="reposition"
+  >
+    <v-progress-circular
+      color="white"
+      indeterminate
+      size="64"
+    ></v-progress-circular>
+  </v-overlay>
+  <template v-else>
+    <div class="pa-6 post-content" v-if="pageData">
+      <h1>{{ pageData?.[0]?.title.rendered ?? "" }}</h1>
+      <div v-html="formattedContent"></div>
+    </div>
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -15,10 +29,17 @@ const route = useRoute();
 // 設定: envファイル読み込みに使用
 const config = useRuntimeConfig();
 
-const { data: pageData } = await useFetch<PageType[]>(
-  `${config.public.WP_API_BASE_URL}/pages?slug=${encodeURIComponent(
-    String(route.name)
-  )}`
+const { data: pageData, pending } = await useAsyncData(
+  "fetch-profile-page-data",
+  () =>
+    $fetch<PageType[]>(
+      `${config.public.WP_API_BASE_URL}/pages?slug=${encodeURIComponent(
+        String(route.name)
+      )}`
+    ),
+  {
+    lazy: true,
+  }
 );
 
 // 整形されたコンテンツを保存するためのリアクティブな変数

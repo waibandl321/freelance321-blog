@@ -1,28 +1,43 @@
 <template>
-  <div v-if="categoryPosts.length > 0" class="pa-6">
-    <v-card
-      v-for="post in categoryPosts"
-      :key="post.id"
-      elevation="4"
-      class="mb-6"
-      @click="handleClickPost(post)"
-    >
-      <v-row>
-        <v-col cols="2"><v-img :src="postFeatureImgPath(post)" cover /></v-col>
-        <v-col>
-          <v-card-title
-            v-html="sanitizeHtml(post.title.rendered)"
-          ></v-card-title>
-          <v-card-subtitle>{{ post.date }}</v-card-subtitle>
-          <v-card-text
-            v-html="sanitizeHtml(post.excerpt.rendered)"
-          ></v-card-text>
-        </v-col>
-      </v-row>
-    </v-card>
-    <InfiniteLoading @infinite="infiniteLoadPost" />
-  </div>
-  <div v-else class="pa-6">データはありません</div>
+  <v-overlay
+    v-if="pending"
+    :model-value="pending"
+    class="align-center justify-center"
+    scroll-strategy="reposition"
+  >
+    <v-progress-circular
+      color="white"
+      indeterminate
+      size="64"
+    ></v-progress-circular>
+  </v-overlay>
+  <template v-else>
+    <div v-if="categoryPosts.length > 0" class="pa-6">
+      <v-card
+        v-for="post in categoryPosts"
+        :key="post.id"
+        elevation="4"
+        class="mb-6"
+        @click="handleClickPost(post)"
+      >
+        <v-row>
+          <v-col cols="2"
+            ><v-img :src="postFeatureImgPath(post)" cover
+          /></v-col>
+          <v-col>
+            <v-card-title
+              v-html="sanitizeHtml(post.title.rendered)"
+            ></v-card-title>
+            <v-card-subtitle>{{ post.date }}</v-card-subtitle>
+            <v-card-text
+              v-html="sanitizeHtml(post.excerpt.rendered)"
+            ></v-card-text>
+          </v-col>
+        </v-row>
+      </v-card>
+      <InfiniteLoading @infinite="infiniteLoadPost" />
+    </div>
+  </template>
 </template>
 
 <script lang="ts" setup>
@@ -56,8 +71,15 @@ const targetCategory = computed(() =>
 /**
  * カテゴリの記事一覧取得処理
  */
-const { data } = await useFetch<PostType[]>(
-  `${config.public.WP_API_BASE_URL}/posts?_embed&categories=${targetCategory.value?.id}&per_page=${perPageCount}&page=${currentPage.value}`
+const { data, pending } = await useAsyncData(
+  `fetch-category-post-${route.params.category}-key`,
+  () =>
+    $fetch<PostType[]>(
+      `${config.public.WP_API_BASE_URL}/posts?_embed&categories=${targetCategory.value?.id}&per_page=${perPageCount}&page=${currentPage.value}`
+    ),
+  {
+    lazy: true,
+  }
 );
 
 /**

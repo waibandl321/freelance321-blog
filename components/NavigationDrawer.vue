@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer>
+  <v-navigation-drawer v-model="drawer" v-if="!pending">
     <v-sheet color="grey-lighten-4" class="pa-4">
       <v-avatar class="mb-4" color="grey-darken-1" size="64">
         <v-img src="/favicon.jpeg" />
@@ -7,6 +7,7 @@
       <div>Jumpei Onishi</div>
     </v-sheet>
     <v-divider></v-divider>
+
     <v-list>
       <!-- 子カテゴリがある場合は v-list-group を使用 -->
       <template v-for="category in structuredCategories" :key="category.id">
@@ -32,10 +33,7 @@ import { useCategoryStore } from "@/stores/categoryStore";
 
 // 設定: envファイル読み込みに使用
 const config = useRuntimeConfig();
-
-/**
- * store
- */
+// store
 const store = useCategoryStore();
 /**
  * 階層構造に変換したカテゴリデータ
@@ -72,14 +70,18 @@ const mapCategories = (categoryList: CategoryType[]) => {
 /**
  * カテゴリ一覧取得
  */
-await useFetch<CategoryType[]>(
-  `${config.public.WP_API_BASE_URL}/categories?per_page=20`,
+
+const { data, pending } = await useAsyncData(
+  "fetch-categories-key",
+  () =>
+    $fetch<CategoryType[]>(
+      `${config.public.WP_API_BASE_URL}/categories?per_page=20`
+    ),
   {
-    onResponse({ request, response, options }) {
-      // Process the response data
-      structuredCategories.value = mapCategories(response._data ?? []);
-      store.storeSetCategories(response._data ?? []);
-    },
+    lazy: true,
   }
 );
+structuredCategories.value = mapCategories(data.value ?? []);
+store.storeSetCategories(data.value ?? []);
+const drawer = ref(null);
 </script>

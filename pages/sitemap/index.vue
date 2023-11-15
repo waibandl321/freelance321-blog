@@ -1,22 +1,36 @@
 <template>
-  <div class="pa-6" v-if="postList.length > 0">
-    <v-list>
-      <v-list-item
-        v-for="post in postList"
-        :key="post.id"
-        @click="handleClickPost(post)"
-        density="compact"
-        lines="two"
-        color="primary"
-      >
-        <v-list-item-title>{{ post.title.rendered }}</v-list-item-title>
-        <v-list-item-subtitle>
-          {{ post.date }}
-        </v-list-item-subtitle>
-      </v-list-item>
-    </v-list>
-    <InfiniteLoading @infinite="infiniteLoadPost" />
-  </div>
+  <v-overlay
+    v-if="pending"
+    :model-value="pending"
+    class="align-center justify-center"
+    scroll-strategy="reposition"
+  >
+    <v-progress-circular
+      color="white"
+      indeterminate
+      size="64"
+    ></v-progress-circular>
+  </v-overlay>
+  <template v-else>
+    <div class="pa-6" v-if="postList.length > 0">
+      <v-list>
+        <v-list-item
+          v-for="post in postList"
+          :key="post.id"
+          @click="handleClickPost(post)"
+          density="compact"
+          lines="two"
+          color="primary"
+        >
+          <v-list-item-title>{{ post.title.rendered }}</v-list-item-title>
+          <v-list-item-subtitle>
+            {{ post.date }}
+          </v-list-item-subtitle>
+        </v-list-item>
+      </v-list>
+      <InfiniteLoading v-if="!pending" @infinite="infiniteLoadPost" />
+    </div>
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -36,20 +50,35 @@ const perPageCount = 100;
 const currentPage = ref(1);
 // store
 const categoryStore = useCategoryStore();
-const { getgetCategoriesMap, categories } = storeToRefs(categoryStore);
+const { getgetCategoriesMap } = storeToRefs(categoryStore);
 
-const { data: pageData } = await useFetch<PageType[]>(
-  `${config.public.WP_API_BASE_URL}/pages?slug=${encodeURIComponent(
-    String(route.name)
-  )}`
+const fetchPosts = () =>
+  $fetch<PostType[]>(`${config.public.WP_API_BASE_URL}/posts`, {
+    params: { per_page: perPageCount, page: currentPage.value },
+  });
+
+const fetchData = async () => {
+  const pagePromise = $fetch<PageType[]>(
+    `${config.public.WP_API_BASE_URL}/pages?slug=${encodeURIComponent(
+      String(route.name)
+    )}`
+  );
+  const postsPromise = fetchPosts();
+  const [pageData, posts] = await Promise.all([pagePromise, postsPromise]);
+  return { pageData, posts };
+};
+const { data, pending } = await useAsyncData(
+  "fetch-sitemap-page-data",
+  fetchData,
+  {
+    lazy: true,
+  }
 );
-const { data: posts } = await useFetch<PostType[]>(
-  `${config.public.WP_API_BASE_URL}/posts?per_page=${perPageCount}&page=${currentPage.value}`
-);
+
 /**
  * カテゴリーの投稿一覧
  */
-const postList = computed(() => posts.value ?? []);
+const postList = computed(() => data.value?.posts ?? []);
 /**
  * infinite-loadingで記事を追加読み込みする
  * @param $state loadingの状態を管理するstate
@@ -63,9 +92,7 @@ const infiniteLoadPost = async ($state: any) => {
   try {
     // ページカウントを加算
     currentPage.value++;
-    const { data } = await useFetch<PostType[]>(
-      `${config.public.WP_API_BASE_URL}/posts?per_page=${perPageCount}&page=${currentPage.value}`
-    );
+    const { data } = await useAsyncData(() => fetchPosts());
     if (data.value) {
       data.value.forEach((post) => {
         postList.value.push(post);
@@ -89,8 +116,8 @@ const handleClickPost = (post: PostType) => {
 };
 
 useSeoMeta({
-  title: () => pageData.value?.[0]?.title.rendered ?? "",
+  title: () => data.value?.pageData?.[0]?.title.rendered ?? "",
   description: () =>
-    `description: ${pageData.value?.[0]?.excerpt.rendered ?? ""}`,
+    `description: ${data.value?.pageData?.[0]?.excerpt.rendered ?? ""}`,
 });
 </script>
