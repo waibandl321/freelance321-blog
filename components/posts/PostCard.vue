@@ -23,10 +23,6 @@ defineProps<{
 }>();
 
 /**
- * emits
- */
-
-/**
  * サムネイルURLを返す
  */
 const postFeatureImgPath = (post: PostType) => {

@@ -436,7 +436,9 @@ div.ez-toc-counter {
 .ez-toc-wrap-center {
   margin: 0 auto 1em!important
 }
-
+.ez-toc-counter a:hover {
+  text-decoration: initial;
+}
 .ez-toc-counter a.ez-toc-toggle {
   color: #444;
   background: inherit;

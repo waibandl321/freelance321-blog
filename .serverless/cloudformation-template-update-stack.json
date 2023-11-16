@@ -162,7 +162,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/freelance321-blog/dev/1700036804394-2023-11-15T08:26:44.394Z/freelance321-blog.zip"
+          "S3Key": "serverless/freelance321-blog/dev/1700042947000-2023-11-15T10:09:07.000Z/freelance321-blog.zip"
         },
         "Handler": ".output/server/index.handler",
         "Runtime": "nodejs18.x",
@@ -180,14 +180,14 @@
         "NuxtSsrCoreLogGroup"
       ]
     },
-    "NuxtSsrCoreLambdaVersionF0bproVnL76urHyBn3lluOyBrh6fvuNol5D86mYtwy4": {
+    "NuxtSsrCoreLambdaVersionMndWq8tO4OhYSchy8RZAyBNll97NgF0UGq7qxXMSw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "NuxtSsrCoreLambdaFunction"
         },
-        "CodeSha256": "rqgx8BEbzvgAu6XBzIOPXwmz72Vrf9Z+q6hme70P9nw="
+        "CodeSha256": "nKedGfZMPWZh4Xi0F34klvmYbGpSGFjvzGONISWaiis="
       }
     },
     "NuxtSsrCoreLambdaFunctionUrl": {
@@ -229,7 +229,7 @@
     "NuxtSsrCoreLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "NuxtSsrCoreLambdaVersionF0bproVnL76urHyBn3lluOyBrh6fvuNol5D86mYtwy4"
+        "Ref": "NuxtSsrCoreLambdaVersionMndWq8tO4OhYSchy8RZAyBNll97NgF0UGq7qxXMSw"
       },
       "Export": {
         "Name": "sls-freelance321-blog-dev-NuxtSsrCoreLambdaFunctionQualifiedArn"

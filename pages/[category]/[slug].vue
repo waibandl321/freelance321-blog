@@ -22,14 +22,16 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
 import sanitizeHtml from "sanitize-html";
-import hljs from "highlight.js";
 import type { PostType } from "@/types/post";
+import { usePost } from "@/composables/usePost";
 
 const route = useRoute();
 const slug = route.params.slug;
 
 // 設定: envファイル読み込みに使用
 const config = useRuntimeConfig();
+// composable function
+const { convertHighlightElement } = usePost();
 // 初回描画フラグ
 const isMounted = ref(false);
 
@@ -46,55 +48,18 @@ const { data: postData, pending } = await useAsyncData(
 
 useSeoMeta({
   title: () => postData.value?.[0]?.title.rendered ?? "",
-  description: () =>
-    `description: ${postData.value?.[0]?.excerpt.rendered ?? ""}`,
+  description: () => postData.value?.[0]?.excerpt.rendered ?? "",
 });
 
 /**
  * 整形されたコンテンツを保存するためのリアクティブな変数
  */
-const formattedContent = computed(() => convertHighlightElement());
+const formattedContent = computed(() =>
+  convertHighlightElement(isMounted.value, postData.value?.[0])
+);
 
-/**
- * WordPressのhighlight code blockで生成された要素をHTML要素に変換する
- * この対応を行うことでコードブロックにCSSが適用されるようになる
- */
-const convertHighlightElement = () => {
-  if (!isMounted.value) return;
-  const dom = document.createElement("div");
-  dom.innerHTML = postData.value?.[0].content.rendered ?? "";
-  const hcb_elements = dom.querySelectorAll(".hcb_wrap pre");
-
-  for (const element of Array.from(hcb_elements)) {
-    const code = element.querySelector("code");
-    const lang = element.getAttribute("data-lang");
-    if (!lang || !code || !element.textContent) {
-      continue;
-    }
-    // highlight.jsでハイライト
-    const result = hljs.highlightAuto(element.textContent);
-    code.innerHTML = result.value;
-
-    // 行番号の追加
-    const lineNumbersWrapper = document.createElement("span");
-    lineNumbersWrapper.setAttribute("aria-hidden", "true");
-    lineNumbersWrapper.classList.add("line-numbers-rows");
-    const lineCount = element.textContent.split("\n").length;
-
-    for (let i = 0; i < lineCount; i++) {
-      const lineNumberSpan = document.createElement("span");
-      lineNumbersWrapper.appendChild(lineNumberSpan);
-    }
-
-    code.appendChild(lineNumbersWrapper);
-  }
-
-  return sanitizeHtml(dom.outerHTML);
-};
-
-onMounted(() => {
+onMounted(async () => {
   isMounted.value = true;
-  convertHighlightElement();
 });
 
 // -- sanitizeHTMLホワイトリスト -------------- //
