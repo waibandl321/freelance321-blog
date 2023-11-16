@@ -173,7 +173,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/freelance321-blog/dev/1700042947000-2023-11-15T10:09:07.000Z/freelance321-blog.zip"
+                "S3Key": "serverless/freelance321-blog/dev/1700101139766-2023-11-16T02:18:59.766Z/freelance321-blog.zip"
               },
               "Handler": ".output/server/index.handler",
               "Runtime": "nodejs18.x",
@@ -191,14 +191,14 @@
               "NuxtSsrCoreLogGroup"
             ]
           },
-          "NuxtSsrCoreLambdaVersionMndWq8tO4OhYSchy8RZAyBNll97NgF0UGq7qxXMSw": {
+          "NuxtSsrCoreLambdaVersionAaKIFDXOx4KK90UPbv1MKOtQQWGFXvczR54ZrumYY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "NuxtSsrCoreLambdaFunction"
               },
-              "CodeSha256": "nKedGfZMPWZh4Xi0F34klvmYbGpSGFjvzGONISWaiis="
+              "CodeSha256": "0lQZBE+DEo8Dy+iSpwGYqMtLEPKJLyRLEs3XTIoSdDs="
             }
           },
           "NuxtSsrCoreLambdaFunctionUrl": {
@@ -237,7 +237,7 @@
           "NuxtSsrCoreLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "NuxtSsrCoreLambdaVersionMndWq8tO4OhYSchy8RZAyBNll97NgF0UGq7qxXMSw"
+              "Ref": "NuxtSsrCoreLambdaVersionAaKIFDXOx4KK90UPbv1MKOtQQWGFXvczR54ZrumYY"
             },
             "Export": {
               "Name": "sls-freelance321-blog-dev-NuxtSsrCoreLambdaFunctionQualifiedArn"
@@ -353,7 +353,7 @@
         "memory": 1024,
         "timeout": 6,
         "vpc": {},
-        "versionLogicalId": "NuxtSsrCoreLambdaVersionMndWq8tO4OhYSchy8RZAyBNll97NgF0UGq7qxXMSw"
+        "versionLogicalId": "NuxtSsrCoreLambdaVersionAaKIFDXOx4KK90UPbv1MKOtQQWGFXvczR54ZrumYY"
       }
     },
     "configValidationMode": "warn",
@@ -371,7 +371,7 @@
         ],
         "artifactsS3KeyDirname": "serverless/freelance321-blog/dev/code-artifacts",
         "artifact": "/Users/waibandl321/onishi/code/Vue-Nuxt/freelance321-blog/.serverless/freelance321-blog.zip",
-        "artifactDirectoryName": "serverless/freelance321-blog/dev/1700042947000-2023-11-15T10:09:07.000Z"
+        "artifactDirectoryName": "serverless/freelance321-blog/dev/1700101139766-2023-11-16T02:18:59.766Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -382,7 +382,7 @@
     "artifact": "/Users/waibandl321/onishi/code/Vue-Nuxt/freelance321-blog/.serverless/freelance321-blog.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/freelance321-blog/dev/1700042947000-2023-11-15T10:09:07.000Z",
+    "artifactDirectoryName": "serverless/freelance321-blog/dev/1700101139766-2023-11-16T02:18:59.766Z",
     "artifact": "freelance321-blog.zip"
   }
 }

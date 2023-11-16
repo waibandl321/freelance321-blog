@@ -70,8 +70,14 @@ const postList = computed(() => data.value?.posts ?? []);
  * metaタグ設定
  */
 useHead({
-  title: "トップ",
-  meta: [{ name: "description", content: "HOMEページのdescriptionです。" }],
+  title: "WEB制作・開発者の記録",
+  meta: [
+    {
+      name: "description",
+      content:
+        "当ブログでは、エンジニアとして実務を行う中で蓄積したノウハウをアウトプットするために運用しています。",
+    },
+  ],
 });
 
 /**
