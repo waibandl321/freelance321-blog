@@ -10,7 +10,12 @@ export default defineNuxtConfig({
     preset: "aws-lambda",
     serveStatic: false,
   },
-  modules: ["@invictus.codes/nuxt-vuetify", "@nuxt/image", "@pinia/nuxt"],
+  modules: [
+    "@invictus.codes/nuxt-vuetify",
+    "@nuxt/image",
+    "@pinia/nuxt",
+    "nuxt-lodash",
+  ],
   pinia: {
     storesDirs: ["./stores/**"],
   },

@@ -4,6 +4,12 @@ h2#outline__1 {
 .v-responsive.v-img {
   height: 100%;
 }
+code {
+  padding: 2px 4px;
+  font-size: 90%;
+  background-color: #f8f5f5;
+  border-radius: 4px;
+}
 .post-wrap h2 {
   font-size: 24px;
 }

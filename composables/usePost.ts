@@ -3,6 +3,11 @@ import hljs from "highlight.js";
 import type { PostType } from "@/types/post";
 
 export function usePost() {
+  // vue-router
+  const router = useRouter();
+  // store
+  const categoryStore = useCategoryStore();
+  const { getgetCategoriesMap } = storeToRefs(categoryStore);
   /**
    * WordPressのhighlight code blockで生成された要素をHTML要素に変換する
    * この対応を行うことでコードブロックにCSSが適用されるようになる
@@ -47,7 +52,17 @@ export function usePost() {
     return sanitizeHtml(dom.outerHTML);
   };
 
+  /**
+   * 投稿画面への遷移
+   * @param post 投稿データ
+   */
+  const moveToPostPage = (post: PostType) => {
+    const categorySlug = getgetCategoriesMap.value[post.categories[0]].slug;
+    router.push(`/${categorySlug}/${post.slug}/`);
+  };
+
   return {
     convertHighlightElement,
+    moveToPostPage,
   };
 }

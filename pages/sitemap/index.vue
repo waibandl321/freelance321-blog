@@ -56,7 +56,7 @@ const { getgetCategoriesMap } = storeToRefs(categoryStore);
  * 投稿一覧を取得
  */
 const fetchPosts = () =>
-  $fetch<PostType[]>(`${config.public.WP_API_BASE_URL}/posts`, {
+  $fetch<PostType[]>(`${config.public.WP_API_BASE_URL}/posts?context=embed`, {
     params: { per_page: perPageCount, page: currentPage.value },
   });
 
