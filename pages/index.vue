@@ -1,17 +1,6 @@
 <template>
-  <v-overlay
-    v-if="pending"
-    :model-value="pending"
-    class="align-center justify-center"
-    scroll-strategy="reposition"
-  >
-    <v-progress-circular
-      color="white"
-      indeterminate
-      size="64"
-    ></v-progress-circular>
-  </v-overlay>
-  <div v-else class="pa-6">
+  <LoadingOverlay :loading="pending" />
+  <div class="pa-6" v-if="postList.length > 0">
     <v-card flat>
       <v-card-title>新着記事</v-card-title>
       <PostCard
@@ -29,6 +18,7 @@ import type { PostType } from "@/types/post";
 import { useCategoryStore } from "@/stores/categoryStore";
 import { storeToRefs } from "pinia";
 import PostCard from "@/components/posts/PostCard.vue";
+import LoadingOverlay from "@/components/LoadingOverlay.vue";
 
 // 設定: envファイル読み込みに使用
 const config = useRuntimeConfig();

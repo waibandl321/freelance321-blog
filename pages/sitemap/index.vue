@@ -1,36 +1,24 @@
 <template>
-  <v-overlay
-    v-if="pending"
-    :model-value="pending"
-    class="align-center justify-center"
-    scroll-strategy="reposition"
-  >
-    <v-progress-circular
-      color="white"
-      indeterminate
-      size="64"
-    ></v-progress-circular>
-  </v-overlay>
-  <template v-else>
-    <div class="pa-6" v-if="postList.length > 0">
-      <v-list>
-        <v-list-item
-          v-for="post in postList"
-          :key="post.id"
-          @click="handleClickPost(post)"
-          density="compact"
-          lines="two"
-          color="primary"
-        >
-          <v-list-item-title>{{ post.title.rendered }}</v-list-item-title>
-          <v-list-item-subtitle>
-            {{ post.date }}
-          </v-list-item-subtitle>
-        </v-list-item>
-      </v-list>
-      <InfiniteLoading v-if="!pending" @infinite="infiniteLoadPost" />
-    </div>
-  </template>
+  <LoadingOverlay :loading="pending" />
+
+  <div class="pa-6" v-if="postList.length > 0">
+    <v-list>
+      <v-list-item
+        v-for="post in postList"
+        :key="post.id"
+        @click="handleClickPost(post)"
+        density="compact"
+        lines="two"
+        color="primary"
+      >
+        <v-list-item-title>{{ post.title.rendered }}</v-list-item-title>
+        <v-list-item-subtitle>
+          {{ post.date }}
+        </v-list-item-subtitle>
+      </v-list-item>
+    </v-list>
+    <InfiniteLoading v-if="!pending" @infinite="infiniteLoadPost" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -39,6 +27,7 @@ import type { PostType } from "@/types/post";
 import type { PageType } from "@/types/page";
 import InfiniteLoading from "v3-infinite-loading";
 import { storeToRefs } from "pinia";
+import LoadingOverlay from "@/components/LoadingOverlay.vue";
 
 // vue-router
 const route = useRoute();

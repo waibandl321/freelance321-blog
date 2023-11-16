@@ -1,27 +1,15 @@
 <template>
-  <v-overlay
-    v-if="pending"
-    :model-value="pending"
-    class="align-center justify-center"
-    scroll-strategy="reposition"
-  >
-    <v-progress-circular
-      color="white"
-      indeterminate
-      size="64"
-    ></v-progress-circular>
-  </v-overlay>
-  <template v-else>
-    <div v-if="categoryPosts.length > 0" class="pa-6">
-      <PostCard
-        v-for="post in categoryPosts"
-        :key="post.id"
-        :post="post"
-        @handleClickPost="handleClickPost"
-      />
-      <InfiniteLoading @infinite="infiniteLoadPost" />
-    </div>
-  </template>
+  <LoadingOverlay :loading="pending" />
+
+  <div v-if="categoryPosts.length > 0" class="pa-6">
+    <PostCard
+      v-for="post in categoryPosts"
+      :key="post.id"
+      :post="post"
+      @handleClickPost="handleClickPost"
+    />
+    <InfiniteLoading @infinite="infiniteLoadPost" />
+  </div>
 </template>
 
 <script lang="ts" setup>

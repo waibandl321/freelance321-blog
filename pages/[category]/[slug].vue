@@ -1,22 +1,9 @@
 <template>
-  <v-overlay
-    v-if="pending"
-    :model-value="pending"
-    class="align-center justify-center"
-    scroll-strategy="reposition"
-  >
-    <v-progress-circular
-      color="white"
-      indeterminate
-      size="64"
-    ></v-progress-circular>
-  </v-overlay>
-  <template v-else>
-    <div class="post-content" v-if="postData && formattedContent">
-      <h1>{{ sanitizeHtml(postData?.[0]?.title.rendered ?? "") }}</h1>
-      <div v-html="formattedContent"></div>
-    </div>
-  </template>
+  <LoadingOverlay :loading="pending" />
+  <div class="post-content" v-if="postData && formattedContent">
+    <h1>{{ sanitizeHtml(postData?.[0]?.title.rendered ?? "") }}</h1>
+    <div v-html="formattedContent"></div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -24,6 +11,7 @@ import { useRoute } from "vue-router";
 import sanitizeHtml from "sanitize-html";
 import type { PostType } from "@/types/post";
 import { usePost } from "@/composables/usePost";
+import LoadingOverlay from "@/components/LoadingOverlay.vue";
 
 const route = useRoute();
 const slug = route.params.slug;
